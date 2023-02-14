@@ -8,8 +8,8 @@ while(($line = fgets($f)) != ".IPPcode23\n")
 }
 $tokens = [];
 while( $line = fgets( $f ) ) {
+    print($line);
     Lexems::Tokenize($line, $tokens);
-    print_r($tokens);
 }
-
+print_r($tokens);
 fclose( $f );
