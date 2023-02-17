@@ -25,7 +25,7 @@ class Lexems
             {
                 $tmp .= $input[$i];
             }
-            else if(!preg_match('/^\s$/', $input[$i+1]))
+            else if(!preg_match('/^\s$/', $input[$i+1]) && $input[$i] != "#")
             {
                 $output[$j] = $tmp;
                 $j++;
@@ -46,18 +46,24 @@ class Lexems
     {
         if(self::IsCommentWhite($input)) return 0;
         if(preg_match('/^(?i:((CREATEFRAME)|(PUSHFRAME)|(POPFRAME)|(RETURN)|(BREAK)))$/',$input)) return 1;
-        if(preg_match('/^(?i:((DEFVAR|CALL|PUSHS|POPS|WRITE|LABEL|JUMP|EXIT|DPRINT)))$/', $input)) return 2;
-        if(preg_match('/^(?i:((MOVE|INT2CHAR|READ|TYPE)))$/', $input)) return 3;
-        if(preg_match('/^(?i:((ADD|SUB|MUL|IDIV|LT|GT|EQ|AND|OR|NOT|STRI2INT|CONCAT|GETCHAR|SETCHAR|JUMPIFEQ)))$/', $input)) return 4;
-        if(preg_match('/^GF@[A-Z,a-z,0-9,_,\-,$,&,%,*,!,?]*$/', $input)) return 5;
-        if(preg_match('/^LF@[A-Z,a-z,0-9,_,\-,$,&,%,*,!,?]*$/', $input)) return 6;
-        if(preg_match('/^TF@[A-Z,a-z,0-9,_,\-,$,&,%,*,!,?]*$/', $input)) return 7;
-        if(preg_match('/^bool@(true|false)$/', $input)) return 8;
-        if($input == 'nil@nil') return 9;
-        if(preg_match('/^int@[A-Z,a-z,0-9,\-,+]+$/', $input)) return 10;
-        if(preg_match('/^string@([A-Z,a-z,0-9,\pL](\\\\\pN{3})*)*$/u', $input)) return 11;
-        if(preg_match('/^[a-z,A-Z,0-9,_,\-,$,&,%,*,!,?,\pL]*$/u', $input)) return 12;
-        return -1;
+        if(preg_match('/^(?i:(DEFVAR|POP|POPS))$/',$input)) return 2;
+        if(preg_match('/^(?i:(LABEL|JUMP|CALL))$/',$input)) return 3;
+        if(preg_match('/^(?i:(PUSHS|WRITE|EXIT|DPRINT))$/',$input)) return 4;
+        if(preg_match('/^(?i:(MOVE|NOT|INT2CHAR|STRLEN|TYPE))$/',$input)) return 5;
+        if(preg_match('/^(?i:(READ))$/',$input)) return 6;
+        if(preg_match('/^(?i:(ADD|SUB|MUL|IDIV|LT|GT|EQ|AND|OR|STRI2INT|CONCAT|GETCHAR|SETCHAR))$/',$input)) return 7;
+        if(preg_match('/^(?i:(JUMPIFEQ|JUMPIFNEQ))$/',$input)) return 8;
+        if(preg_match('/^GF@[A-Za-z_\-$&%*!?\pL]+[A-Za-z0-9_\-$&%*!?\pL]*$/u', $input)) return 9;
+        if(preg_match('/^LF@[A-Za-z_\-$&%*!?\pL]+[A-Za-z0-9_\-$&%*!?\pL]*$/u', $input)) return 10;
+        if(preg_match('/^TF@[A-Za-z_\-$&%*!?\pL]+[A-Za-z0-9_\-$&%*!?\pL]*$/u', $input)) return 11;
+        if(preg_match('/^bool@(true|false)$/', $input)) return 12;
+        if($input == 'nil@nil') return 13;
+        if(preg_match('/^int@[A-Za-z0-9\-+]+$/', $input)) return 14;
+        if(preg_match('/^string@([A-Za-z0-9\pL](\\\\\pN{3})*)*$/u', $input)) return 15;
+        if(preg_match('/^[a-zA-Z0-9_\-$&%*!?\pL]*$/u', $input)) return 16;
+
+        if(preg_match('/[@\/\\\]/',$input)) exit(23);
+        exit(22);
     }
 
     public static function Tokenize($input, &$tokens)
@@ -70,17 +76,11 @@ class Lexems
         foreach($words as $word)
         {
             $Lexem = self::GetLexeme($word);
-            if($Lexem == -1)
-            {
-                if(preg_match('/(@|\\\)/',$input)) exit(23);
-                exit(22);
-            }
-            else if($Lexem == 0)
+            if($Lexem == 0)
             {
                 break;
             }
             $tokens[] = [$Lexem, $word];
         }
-
     }
 }
