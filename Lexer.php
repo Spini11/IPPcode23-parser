@@ -59,7 +59,7 @@ class Lexems
         if(preg_match('/^bool@(true|false)$/', $input)) return 12;
         if($input == 'nil@nil') return 13;
         if(preg_match('/^int@[A-Za-z0-9\-+]+$/', $input)) return 14;
-        if(preg_match('/^string@([A-Za-z0-9\pL](\\\\\pN{3})*)*$/u', $input)) return 15;
+        if(preg_match('/^string@([^#\s\x0-\x1A\\\]*(\\\\\pN{3,})*)*\s*$/u',$input)) return 15;
         if(preg_match('/^[a-zA-Z0-9_\-$&%*!?\pL]*$/u', $input)) return 16;
 
         if(preg_match('/[@\/\\\]/',$input)) exit(23);

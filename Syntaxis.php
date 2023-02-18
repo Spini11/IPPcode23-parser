@@ -38,6 +38,7 @@ class Syntaxis
     }
     public static function Verify(&$input)
     {
+        $i = 0;
         foreach ($input as $token)
         {
             switch (self::$state)
@@ -48,6 +49,7 @@ class Syntaxis
                     if($token[0] > 8) exit(23);
                     self::$state = "Get_comm";
                 case "Get_comm":
+                    if($token[0] == 0) break;
                     self::GetCommandCat($token[0]);
                     break;
                 case "EOL":
@@ -60,7 +62,7 @@ class Syntaxis
                     break;
                 case "Label_op":
                     if($token[0] != 16 && ($token[0] < 1 ||$token[0] > 8)) exit(23);
-                    if($token[0] != 16) $token[0] = 16;
+                    if($token[0] != 16) $input[$i][0] = 16;
                     self::$state = "EOL";
                     break;
                 case "Symb_op":
@@ -78,6 +80,7 @@ class Syntaxis
                 case "VT_op2":
                     if(!preg_match('/^(int|string|bool)$/',$token[1])) exit(23);
                     self::$state = "EOL";
+                    $input[$i][0] = 17;
                     break;
                 case "VSS_op1":
                     if($token[0] < 9 || $token[0] > 11) exit(23);
@@ -89,10 +92,11 @@ class Syntaxis
                     break;
                 case "LSS_op1":
                     if($token[0] != 16 && ($token[0] < 1 ||$token[0] > 8)) exit(23);
-                    if($token[0] != 16) $token[0] = 16;
+                    if($token[0] != 16) $input[$i][0] = 16;
                     self::$state = "VSS_op2";
                     break;
             }
+            $i++;
         }
     }
 }
