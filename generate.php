@@ -13,8 +13,9 @@ class Generate
     public static function generate3($input)
     {
         $array = ['@attributes' => [
-            'language'=>'IPPcode23'
-        ]];
+            'language'=>'IPPcode23'],
+            'instruction' => [],
+            ];
         $inst = 0;
         $arg = 0;
         $tmp = null;
@@ -24,25 +25,24 @@ class Generate
             {
                 $inst++;
                 $opcode = strtoupper($token[1]);
-                $tmp = ['instruction' => [
+                $tmp = [
                     '@attributes'=> [
                         'order' => $inst,
                         'opcode' => $token[1]
-                    ],
                 ]];
             }
             else if($token[0] == 0)
             {
                 $arg = 0;
                 print_r($array);
-                $array = array_merge($array, $tmp);
+                $array['instruction'][$inst-1] = $tmp;
                 $tmp = null;
             }
             else
             {
                 $arg++;
                 $argprint = self::arg_proc($token);
-                $tmp['instruction']=array_merge($tmp['instruction'],["arg$arg"=>[
+                $tmp=array_merge($tmp,["arg$arg"=>[
                     '@value' => $argprint[1],
                     '@attributes' => [
                         'type' => $argprint[0],
