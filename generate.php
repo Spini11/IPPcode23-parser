@@ -12,10 +12,20 @@ class Generate
     }
     public static function generate3($input)
     {
-        $array = ['@attributes' => [
-            'language'=>'IPPcode23'],
-            'instruction' => [],
+
+        if(!empty($input))
+        {
+            $array = ['@attributes' => [
+                'language'=>'IPPcode23'],
+                'instruction' => [],
             ];
+        }
+        else
+        {
+            $array = ['@attributes' => [
+                'language'=>'IPPcode23'],
+            ];
+        }
         $inst = 0;
         $arg = 0;
         $tmp = null;
@@ -28,13 +38,12 @@ class Generate
                 $tmp = [
                     '@attributes'=> [
                         'order' => $inst,
-                        'opcode' => $token[1]
+                        'opcode' => $opcode
                 ]];
             }
             else if($token[0] == 0)
             {
                 $arg = 0;
-                print_r($array);
                 $array['instruction'][$inst-1] = $tmp;
                 $tmp = null;
             }
