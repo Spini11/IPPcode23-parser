@@ -1,5 +1,4 @@
 <?php
-
 class Syntaxis
 {
     private static $state = "Check_first";

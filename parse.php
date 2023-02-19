@@ -16,8 +16,9 @@ while( $line = fgets( $f ) ) {
 }
 //print_r($tokens);
 Syntaxis::Verify($tokens);
-print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-if(!empty($tokens)) Generate::generate($tokens);
-else print("<program language=\"IPPcode23\"/>\n");
+/*print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+//if(!empty($tokens)) Generate::generate($tokens);
+//else print("<program language=\"IPPcode23\"/>\n");*/
+Generate::generate3($tokens);
 fclose( $f );
 exit(0);
