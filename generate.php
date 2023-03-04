@@ -62,31 +62,4 @@ class Generate
         $xml = Array2XML::createXML('program', $array);
         echo $xml->saveXML();
     }
-    public static function generate($input)
-    {
-        print("<program language=\"IPPcode23\">\n");
-        $inst = 0;
-        $arg = 0;
-        foreach ($input as $token)
-        {
-            if($token[0] <= 8 && $token[0] != 0)
-            {
-                $inst++;
-                $opcode = strtoupper($token[1]);
-                print("\t<instruction order=\"$inst\" opcode=\"$opcode\">\n");
-            }
-            else if($token[0] == 0)
-            {
-                $arg = 0;
-                print("\t</instruction>\n");
-            }
-            else
-            {
-                $arg++;
-                $argprint = self::arg_proc($token);
-                print("\t\t<arg$arg type=\"$argprint[0]\">$argprint[1]</arg$arg>\n");
-            }
-        }
-        print("</program>\n");
-    }
 }

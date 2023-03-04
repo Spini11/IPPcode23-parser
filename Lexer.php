@@ -1,7 +1,7 @@
 <?php
+require_once('ErrorHandling.php');
 class Lexems
 {
-
     public static function IsCommentWhite($input)
     {
         if(preg_match('/^\s*$/',$input) || preg_match('/^\s*#/', $input))
@@ -42,7 +42,7 @@ class Lexems
         return $output;
     }
 
-    private static function GetLexeme($input)
+    private static function GetLexeme($input,$lineN)
     {
         if(self::IsCommentWhite($input)) return 0;
         if(preg_match('/^(?i:((CREATEFRAME)|(PUSHFRAME)|(POPFRAME)|(RETURN)|(BREAK)))$/',$input)) return 1;
@@ -62,11 +62,13 @@ class Lexems
         if(preg_match('/^string@([^#\s\x0-\x1A\\\]*(\\\\\pN{3,})*)*\s*$/u',$input)) return 15;
         if(preg_match('/^[a-zA-Z0-9_\-$&%*!?\pL]*$/u', $input)) return 16;
 
-        if(preg_match('/[@\/\\\]/',$input)) exit(23);
-        exit(22);
+        print($input);
+        print("\n");
+        if(preg_match('/[@\/\\\]/',$input)) ErrorHandling::ErrorLexical(2,$lineN,$input);
+        ErrorHandling::ErrorLexical(1,$lineN,$input);
     }
 
-    public static function Tokenize($input, &$tokens)
+    public static function Tokenize($input, &$tokens, $lineN)
     {
         if(self::IsCommentWhite($input))
         {
@@ -75,12 +77,12 @@ class Lexems
         $words = self::GetWords($input);
         foreach($words as $word)
         {
-            $Lexem = self::GetLexeme($word);
+            $Lexem = self::GetLexeme($word, $lineN);
             if($Lexem == 0)
             {
                 break;
             }
-            $tokens[] = [$Lexem, $word];
+            $tokens[] = [$Lexem, $word, $lineN];
         }
     }
 }
