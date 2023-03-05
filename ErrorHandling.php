@@ -175,7 +175,7 @@ class ErrorHandling {
                     }
                     if($index == 1)
                     {
-                        if(preg_match('/^(int|string|bool)$/', $operands[1][1]))
+                        if(!preg_match('/^(int|string|bool)$/', $operands[1][1]))
                             fwrite(STDERR, "Operand 2 to command $command on line {$input[$i][2]} is expected to be a type, but was supplied with \"{$operands[1][1]}\" which is a $type.\n");
                         continue;
                     }
@@ -202,7 +202,7 @@ class ErrorHandling {
                     if($index == 2)
                     {
                         if($type != "variable" && $type != "constant")
-                            fwrite(STDERR, "Operand 2 to command $command on line {$input[$i][2]} is expected to be a symbol, but was supplied with \"{$operands[1][1]}\" which is a $type.\n");
+                            fwrite(STDERR, "Operand 3 to command $command on line {$input[$i][2]} is expected to be a symbol, but was supplied with \"{$operands[2][1]}\" which is a $type.\n");
                         continue;
                     }
                     fwrite(STDERR, "Operand $ArgNum to command $command on line {$input[$i][2]} was unexpected. Command $command expects only variable, symbol and symbol as operand.\n");
@@ -228,7 +228,7 @@ class ErrorHandling {
                     if($index == 2)
                     {
                         if($type != "variable" && $type != "constant")
-                            fwrite(STDERR, "Operand 2 to command $command on line {$input[$i][2]} is expected to be a symbol, but was supplied with \"{$operands[1][1]}\" which is a $type.\n");
+                            fwrite(STDERR, "Operand 3 to command $command on line {$input[$i][2]} is expected to be a symbol, but was supplied with \"{$operands[2][1]}\" which is a $type.\n");
                         continue;
                     }
                     fwrite(STDERR, "Operand $ArgNum to command $command on line {$input[$i][2]} was unexpected. Command $command expects only label, symbol and symbol as operand.\n");
