@@ -39,7 +39,7 @@ class ErrorHandling {
                 if (preg_match('/^(?i:(int@))/', $token)) {
                     if (!str_starts_with($token, "int@"))
                         fwrite(STDERR, "\tFix this error by writing int@ in lowercase letters in $token.\n");
-                    else fwrite(STDERR, "\tFix this error by using valid int representation of decimal, hexadecimal or octal value.\n");
+                    else fwrite(STDERR, "\tFix this error by using valid decimal, hexadecimal or octal representation of int value.\n");
                 } else if (preg_match('/^(?i:(string@))/', $token)) {
                     if (!str_starts_with($token, "string@"))
                         fwrite(STDERR, "\tFix this error by writing string@ in lowercase letters in $token.\n");
@@ -49,6 +49,7 @@ class ErrorHandling {
                         fwrite(STDERR, "\tFix this error by writing bool@ in lowercase letters in $token.\n");
                     else fwrite(STDERR, "\tFix this error by using only \"true\" or \"false\" as value.\n");
                 } else if (preg_match('/^(?i:(nil@nil))/', $token)) fwrite(STDERR, "\tFix this error by writing nil@nil in lowercase letters in $token.\n");
+                else fwrite(STDERR, "\tFix this error by using int@, string@, bool@ or nil@nil.");
             }
             exit(23);
         }

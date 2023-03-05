@@ -62,8 +62,6 @@ class Lexems
         if(preg_match('/^string@([^#\s\x0-\x1A\\\]*(\\\\\pN{3,})*)*\s*$/u',$input)) return 15;
         if(preg_match('/^[a-zA-Z0-9_\-$&%*!?\pL]*$/u', $input)) return 16;
 
-        print($input);
-        print("\n");
         if(preg_match('/[@\/\\\]/',$input)) ErrorHandling::ErrorLexical(2,$lineN,$input);
         ErrorHandling::ErrorLexical(1,$lineN,$input);
     }
