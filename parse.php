@@ -3,6 +3,16 @@
     require_once('Syntaxis.php');
     require_once('generate.php');
     require_once('ErrorHandling.php');
+    if($argc == 2 && $argv[1] == "--help")
+    {
+        print("parse.php expects input on STDIN after being launched without any argument.");
+        exit(0);
+    }
+    else if ($argc >= 2)
+    {
+        print("Invalid launch arguments, use --help.");
+        exit(0);
+    }
     $f = fopen( 'php://stdin', 'r' );
     $lineN = 0;
     while(!preg_match('/^\s*(?i:(.IPPcode23))(\s*$|#|\s*#)/', ($line = fgets($f))))

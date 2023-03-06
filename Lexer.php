@@ -15,17 +15,18 @@ class Lexems
     {
 
         if(!preg_match('/(\s)+/',$input)) return [$input];
-        $i = 0;
         $output = [];
         $j = 0;
         $tmp = "";
-        while(!preg_match('/^(\n|\z)$/',$input[$i]))
+
+        $chars = str_split($input);
+        foreach($chars as $i=>$char)
         {
             if(!preg_match('/^\s$/', $input[$i]) && $input[$i] != "#")
             {
                 $tmp .= $input[$i];
             }
-            else if(!preg_match('/^\s$/', $input[$i+1]) && $input[$i] != "#")
+            else if(preg_match('/^\s$/', $input[$i]) && !preg_match('/^\s$/', $input[$i-1]))
             {
                 $output[$j] = $tmp;
                 $j++;
@@ -36,7 +37,7 @@ class Lexems
                 $output[$j] = $tmp;
                 return $output;
             }
-            $i++;
+            //$i++;
         }
         $output[$j] = $tmp;
         return $output;
