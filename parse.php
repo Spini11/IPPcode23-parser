@@ -11,7 +11,7 @@
     else if ($argc >= 2)
     {
         print("Invalid launch arguments, use --help.");
-        exit(0);
+        exit(10);
     }
     $f = fopen( 'php://stdin', 'r' );
     $lineN = 0;

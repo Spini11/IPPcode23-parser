@@ -37,7 +37,6 @@ class Lexems
                 $output[$j] = $tmp;
                 return $output;
             }
-            //$i++;
         }
         $output[$j] = $tmp;
         return $output;
