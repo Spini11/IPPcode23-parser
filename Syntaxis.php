@@ -2,7 +2,7 @@
 require_once('ErrorHandling.php');
 class Syntaxis
 {
-    private static $state = "Check_first";
+    private static $state = "Get_comm";
 
     private static function GetCommandCat($input)
     {
@@ -32,72 +32,69 @@ class Syntaxis
             case 8:
                 self::$state = "LSS_op1";
                 break;
+            case 16:
+                //label present instead of opcode means command doesn't exist
+                ErrorHandling::ErrorSyntactical(3,$input, null, null);
             default:
+                //Op code needs to be first token on a line
                 ErrorHandling::ErrorSyntactical(3,$input, null, null);
         }
     }
     public static function Verify(&$input)
     {
-        $i = 0;
-        foreach ($input as $token)
+        foreach ($input as $i=>$token)
         {
             switch (self::$state)
             {
-                case "Check_first":
+                case "Get_comm": //initial state
                     if($token[0] == 0) break;
-                    if($token[0] == 16) ErrorHandling::ErrorSyntactical(3,$token, null, null);
-                    if($token[0] > 8) ErrorHandling::ErrorSyntactical(4,$token, null, null);
-                    self::$state = "Get_comm";
-                case "Get_comm":
-                    if($token[0] == 0) break;
-                    if($token[0] == 16) ErrorHandling::ErrorSyntactical(3,$token, null, null);
-                    self::GetCommandCat($token);
+                    self::GetCommandCat($token); //Function changes the state based on the command category, exits if not a command.
                     break;
                 case "EOL":
+                    //verifies end of line is actually present
                     if($token[0] != 0) ErrorHandling::ErrorSyntactical(5,$token, $input, $i);
                     self::$state = "Get_comm";
                     break;
-                case "Var_op":
+                case "Var_op": //op code expecting only variable
                     if($token[0] < 9 || $token[0] > 11) ErrorHandling::ErrorSyntactical(5,$token, $input, $i);
-                    self::$state = "EOL";
+                    self::$state = "EOL"; //transition into end of line state
                     break;
-                case "Label_op":
+                case "Label_op": //op code expecting only label
                     if($token[0] != 16 && ($token[0] < 1 ||$token[0] > 8)) ErrorHandling::ErrorSyntactical(5,$token, $input, $i);
                     if($token[0] != 16) $input[$i][0] = 16;
                     self::$state = "EOL";
                     break;
-                case "Symb_op":
+                case "Symb_op": //op code expecting only symbol
                     if($token[0] < 9 || $token[0] > 15) ErrorHandling::ErrorSyntactical(5,$token, $input, $i);
                     self::$state = "EOL";
                     break;
-                case "VS_op1":
+                case "VS_op1": //op code expecting variable and symbol, variable check
                     if($token[0] < 9 || $token[0] > 11) ErrorHandling::ErrorSyntactical(5,$token, $input, $i);
                     self::$state = "Symb_op";
                     break;
-                case "VT_op1":
+                case "VT_op1": //op code expecting variable and type, variable check
                     if($token[0] < 9 || $token[0] > 11) ErrorHandling::ErrorSyntactical(5,$token, $input, $i);
                     self::$state = "VT_op2";
                     break;
-                case "VT_op2":
+                case "VT_op2": //op code expecting variable and type, type check
                     if(!preg_match('/^(int|string|bool)$/',$token[1])) ErrorHandling::ErrorSyntactical(5,$token, $input, $i);
                     self::$state = "EOL";
                     $input[$i][0] = 17;
                     break;
-                case "VSS_op1":
+                case "VSS_op1": //op code expecting variable and two symbols, variable check
                     if($token[0] < 9 || $token[0] > 11) ErrorHandling::ErrorSyntactical(5,$token, $input, $i);
                     self::$state = "VSS_op2";
                     break;
-                case "VSS_op2":
+                case "VSS_op2": //op code expecting variable and two symbols, first symbol check
                     if($token[0] < 9 || $token[0] > 15) ErrorHandling::ErrorSyntactical(5,$token, $input, $i);
                     self::$state = "Symb_op";
                     break;
-                case "LSS_op1":
+                case "LSS_op1": //op code expecting label and two symbols, label check
                     if($token[0] != 16 && ($token[0] < 1 ||$token[0] > 8)) ErrorHandling::ErrorSyntactical(5,$token, $input, $i);
                     if($token[0] != 16) $input[$i][0] = 16;
                     self::$state = "VSS_op2";
                     break;
             }
-            $i++;
         }
     }
 }

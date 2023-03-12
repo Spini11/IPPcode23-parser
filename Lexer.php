@@ -2,7 +2,7 @@
 require_once('ErrorHandling.php');
 class Lexems
 {
-    public static function IsCommentWhite($input)
+    public static function IsCommentWhite($input) //checks if input is white char or comment
     {
         if(preg_match('/^\s*$/',$input) || preg_match('/^\s*#/', $input))
         {
@@ -62,7 +62,9 @@ class Lexems
         if(preg_match('/^string@([^#\s\x0-\x1A\\\]*(\\\\\pN{3,})*)*\s*$/u',$input)) return 15;
         if(preg_match('/^[a-zA-Z0-9_\-$&%*!?\pL]*$/u', $input)) return 16;
 
+        //Error is returned when invalid constant or variable type is found
         if(preg_match('/[@\/\\\]/',$input)) ErrorHandling::ErrorLexical(2,$lineN,$input);
+        //Error when token doesn't comply with Lexical rules
         ErrorHandling::ErrorLexical(1,$lineN,$input);
     }
 
@@ -72,14 +74,15 @@ class Lexems
         {
             return;
         }
-        $words = self::GetWords($input);
+        $words = self::GetWords($input); //splits input line into array of words
         foreach($words as $word)
         {
             $Lexem = self::GetLexeme($word, $lineN);
             if($Lexem == 0)
             {
-                break;
+                break; //When comment is found, processing of current line ends
             }
+            //Array containing lexem category, value and current line position is being created out of tokens
             $tokens[] = [$Lexem, $word, $lineN];
         }
     }

@@ -4,13 +4,14 @@ class Generate
 {
     private static function arg_proc($input)
     {
+        //Translates category number into name of given type for xml
         if($input[0] >= 9 && $input[0] <= 11) return ["var", "$input[1]"];
         if($input[0] == 16) return ["label",$input[1]];
         if($input[0] == 17) return ["type",$input[1]];
         $symb = explode("@", $input[1]);
         if($input[0] >= 12 && $input[0] <= 15) return [$symb[0],$symb[1]];
     }
-    public static function generate3($input)
+    public static function generate($input)
     {
 
         if(!empty($input))
@@ -34,21 +35,23 @@ class Generate
             if($token[0] <= 8 && $token[0] != 0)
             {
                 $inst++;
-                $opcode = strtoupper($token[1]);
+                $opcode = strtoupper($token[1]); //Makes op code names into capital
                 $tmp = [
                     '@attributes'=> [
-                        'order' => $inst,
+                        'order' => $inst, //instruction order
                         'opcode' => $opcode
                 ]];
             }
             else if($token[0] == 0)
             {
+                //when eol is reached block with instruction and possible operands is created
                 $arg = 0;
                 $array['instruction'][$inst-1] = $tmp;
                 $tmp = null;
             }
             else
             {
+                //When operands is found it's added to instruction as operand
                 $arg++;
                 $argprint = self::arg_proc($token);
                 $tmp=array_merge($tmp,["arg$arg"=>[

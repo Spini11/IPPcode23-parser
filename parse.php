@@ -15,21 +15,22 @@
     }
     $f = fopen( 'php://stdin', 'r' );
     $lineN = 0;
+    //Header validity check
     while(!preg_match('/^\s*(?i:(.IPPcode23))(\s*$|#|\s*#)/', ($line = fgets($f))))
     {
-        if(str_contains($line,"\n")) $lineN++;
+        if(str_contains($line,"\n")) $lineN++; //Tracks current line number
         if(!Lexems::IsCommentWhite($line))
-            ErrorHandling::ErrorHeader($lineN);
+            ErrorHandling::ErrorHeader($lineN); //Error if line isn't empty or doesn't contain header or comment
     }
     $lineN++;
     $tokens = [];
     while( $line = fgets( $f ) ) {
         if(str_contains($line,"\n")) $lineN++;
         Lexems::Tokenize($line, $tokens, $lineN);
-        if(!Lexems::IsCommentWhite($line)) $tokens[] = [0, "EOL"];
+        if(!Lexems::IsCommentWhite($line)) $tokens[] = [0, "EOL"]; //End of Line
 
     }
     Syntaxis::Verify($tokens);
-    Generate::generate3($tokens);
+    Generate::generate($tokens);
     fclose( $f );
     exit(0);

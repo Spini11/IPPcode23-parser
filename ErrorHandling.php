@@ -3,6 +3,7 @@ class ErrorHandling {
 
     private static function NumToName($input):string
     {
+        //Translates category number into operand type
         switch($input)
         {
             case 9: case 10: case 11:
@@ -21,6 +22,11 @@ class ErrorHandling {
     }
     public static function ErrorLexical($errcode, $line, $token): void
     {
+        /*
+         * Internal Lexical Error codes
+         * 1 = Token doesn't comply with lexical rules
+         * 2 = Invalid variable or Constant
+         */
         if ($errcode == 1) {
             fwrite(STDERR, "Invalid token $token on line $line.\n");
             exit(22);
@@ -56,6 +62,12 @@ class ErrorHandling {
     }
     public static function ErrorSyntactical($errcode, $token, $input, $i)
     {
+        /*
+         * Internal Syntactical Error codes
+         * 3 = Invalid opcode
+         * 4 = Invalid token as opcode
+         * 5 = Invalid operands
+         */
         if($errcode == 3)
         {
             if(preg_match('/[_\-$&%*!?]/',$token[1])) $errcode = 4;
@@ -72,9 +84,10 @@ class ErrorHandling {
         }
         else if($errcode == 5)
         {
+            //$i is token position in file
             $j = $i-1;
             $k = 0;
-
+            //Gets to first token of the line
             while($input[$j][0] <1 || $input[$j][0] >8)
             {
                 $j--;
@@ -82,6 +95,7 @@ class ErrorHandling {
             $command = $input[$j][1];
             $commandCat = $input[$j][0];
             $operands = null;
+            //creates array of operands
             while($input[$j+1][0] != 0)
             {
                 $operands[$k][1] = $input[$j+1][1];
@@ -90,6 +104,7 @@ class ErrorHandling {
                 $j++;
             }
 
+            //Errors when no operands are present
             if ($operands == null)
             {
                 if($commandCat == 2)
@@ -114,6 +129,7 @@ class ErrorHandling {
             }
             foreach ($operands as $index=>$operand)
             {
+                //Each command category expects different operand types, this is used for accurate error messages.
                 $type = self::NumToName($operand[0]);
                 $ArgNum = $index+1;
                 if($commandCat == 2)
